@@ -11,4 +11,4 @@ UE6 341-0754-A
 UE7 341-0744-A
 
 The original PALs have been reverse-engineered and equations were rewritten to match the behaviour of the originals - the provided
-JEDEC files are not dumps of the content of the original files.
+JEDEC files are not dumps of the content of the original chips.
