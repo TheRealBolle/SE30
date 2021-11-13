@@ -1,4 +1,4 @@
-# SE30
+# Macintosh SE/30 Logicboard recreation
 
 This is a recreation of the Macintosh SE/30 logicboard.
 It is not a 1:1 copy of the original logicboard but instead the original schematics were used to completely redesign and route a lookalike board.
