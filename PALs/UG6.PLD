@@ -1,0 +1,112 @@
+Name     UG6;
+PartNo   341-0747-A;
+Date     10/31/26;
+Revision 01;
+Designer Unknown;
+Company  None;
+Assembly SE30 Logicboard;
+Location UG6;
+Device   G16V8MS;
+/*
+===============================================================================
+                                 Chip Diagram
+===============================================================================
+
+                               ______________
+                              |     UG6      |
+                     C16M --->|1           20|---- Vcc
+                    VADR0 --->|2           19|---- NC (rf19)
+                    VADR1 --->|3           18|---- NC (rf18)
+                    VADR2 --->|4           17|---- NC (rf17)
+                    VADR3 --->|5           16|---- NC (rf16)
+                    VADR4 --->|6           15|---> LCTRRST
+                    VADR5 --->|7           14|---> !VSYNC
+                    VADR7 --->|8           13|---> VIDOUT
+                   SERVID --->|9           12|---> VIDTIME
+                      GND ----|10          11|<--- !OE
+                              |______________|
+
+  Arrows show signal direction:  ---> into the chip is an input, out of it
+  an output, ---- power, a tie-off or no connection.
+
+  Pins 16-19 are NC on the schematic, but the chip still drives them.
+  They are internal state fed back into the logic. Leave them unconnected.
+
+  Pin 1 is the register clock. Pin 11 is !OE, on pulldown net PD7.
+
+*/
+
+/**********************************************************************/
+/* UG6 (341-0747-A) - GAL16V8, registered mode.                       */
+/* Reconstructed from UG6_16v8.JED (EQN2JED output).                  */
+/* Signal names come from the macse30mlb schematic redraw. A `!` on a */
+/* PIN marks an active-low (`*`) net: the name is true when asserted. */
+/* Pins with no net keep their JEDEC label.                           */
+/* The name after each PIN is the JEDEC NOTE PINS label.              */
+/**********************************************************************/
+
+/* Pin 1 (CLK) and pin 11 (/OE) are dedicated in this mode. */
+
+/* Inputs */
+PIN 2  = VADR0;         /* i2 */
+PIN 3  = VADR1;         /* i3 */
+PIN 4  = VADR2;         /* i4 */
+PIN 5  = VADR3;         /* i5 */
+PIN 6  = VADR4;         /* i6 */
+PIN 7  = VADR5;         /* i7 */
+PIN 8  = VADR7;         /* i8 */
+PIN 9  = SERVID;        /* i9 */
+
+/* Outputs */
+PIN 12 = VIDTIME;       /* ro12 */
+PIN 13 = VIDOUT;        /* ro13 */
+PIN 14 = !VSYNC;        /* rf14 */
+PIN 15 = LCTRRST;       /* ro15 */
+PIN 16 = rf16;          /* rf16 */
+PIN 17 = rf17;          /* rf17 */
+PIN 18 = rf18;          /* rf18 */
+PIN 19 = rf19;          /* rf19 */
+
+/* Keep every product term: some outputs are asynchronous latches and
+   rely on these terms, so the compiler must not reduce them. */
+MIN VIDTIME.d = 0;
+MIN VIDOUT.d = 0;
+MIN VSYNC.d = 0;
+MIN LCTRRST.d = 0;
+MIN rf16.d = 0;
+MIN rf17.d = 0;
+MIN rf18.d = 0;
+MIN rf19.d = 0;
+
+/* Logic */
+VIDTIME.d = rf16 & !rf17 & rf18 & !rf19;
+
+VIDOUT.d = SERVID;
+
+VSYNC.d = !VADR1 & VADR2 & VADR3 & !VADR4 & VADR5 & VADR7 & !rf17 & rf18 & !rf19
+        # !VADR2 & VSYNC
+        # !VADR3 & VSYNC
+        # !VADR1 & VSYNC
+        # !VADR5 & VSYNC
+        # !VADR7 & VSYNC
+        # VADR1 & VADR2 & VADR3 & !VADR4 & VADR5 & VADR7 & VSYNC & rf17
+        # VADR1 & VADR2 & VADR3 & !VADR4 & VADR5 & VADR7 & VSYNC & !rf17 & !rf18;
+
+LCTRRST.d = VADR1 & VADR3 & VADR4 & VADR5 & VADR7 & !rf17 & rf18 & !rf19;
+
+!rf16.d = VADR2 & VADR3 & !VADR4 & VADR5 & VADR7 & !rf17 & !rf18 & rf19
+        # VADR7 & !rf16
+        # !VADR0 & !rf16
+        # VADR0 & !VADR7 & !rf16 & rf17
+        # VADR0 & !VADR7 & !rf16 & !rf17 & !rf18 & !rf19
+        # VADR0 & !VADR7 & !rf16 & !rf17 & rf18 & !rf19
+        # VADR0 & !VADR7 & !rf16 & !rf17 & rf18 & rf19;
+
+rf17.d = !rf17 & rf18 & rf19
+       # rf17 & !rf19
+       # rf17 & !rf18;
+
+rf18.d = !rf18 & rf19
+       # rf18 & !rf19;
+
+rf19.d = !rf19;

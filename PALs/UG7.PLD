@@ -1,0 +1,115 @@
+Name     UG7;
+PartNo   341-0746-A;
+Date     10/31/26;
+Revision 01;
+Designer Unknown;
+Company  None;
+Assembly SE30 Logicboard;
+Location UG7;
+Device   G16V8MS;
+/*
+===============================================================================
+                                 Chip Diagram
+===============================================================================
+
+                               ______________
+                              |     UG7      |
+                     C16M --->|1           20|---- Vcc
+                     CNT0 --->|2           19|---> HCTRRST
+                     CNT1 --->|3           18|---- NC (rf18)
+                     CNT2 --->|4           17|---- NC (rf17)
+                     CNT3 --->|5           16|---> C2M
+                     CNT4 --->|6           15|---> SC
+                     CNT5 --->|7           14|---> SREGLD
+                     CNT6 --->|8           13|---> !HSYNC
+                  VIDTIME --->|9           12|---> TWOLINE
+                      GND ----|10          11|<--- !OE
+                              |______________|
+
+  Arrows show signal direction:  ---> into the chip is an input, out of it
+  an output, ---- power, a tie-off or no connection.
+
+  Pins 17 and 18 are NC on the schematic, but the chip still drives them.
+  They are internal state fed back into the logic. Leave them unconnected.
+
+  Pin 1 is the register clock. Pin 11 is !OE, on pulldown net PD1.
+
+*/
+
+/**********************************************************************/
+/* UG7 (341-0746-A) - GAL16V8, registered mode.                       */
+/* Reconstructed from UG7_16v8.JED (EQN2JED output).                  */
+/* Signal names come from the macse30mlb schematic redraw. A `!` on a */
+/* PIN marks an active-low (`*`) net: the name is true when asserted. */
+/* Pins with no net keep their JEDEC label.                           */
+/* The name after each PIN is the JEDEC NOTE PINS label.              */
+/**********************************************************************/
+
+/* Pin 1 (CLK) and pin 11 (/OE) are dedicated in this mode. */
+
+/* Inputs */
+PIN 2  = CNT0;          /* i2 */
+PIN 3  = CNT1;          /* i3 */
+PIN 4  = CNT2;          /* i4 */
+PIN 5  = CNT3;          /* i5 */
+PIN 6  = CNT4;          /* i6 */
+PIN 7  = CNT5;          /* i7 */
+PIN 8  = CNT6;          /* i8 */
+PIN 9  = VIDTIME;       /* i9 */
+
+/* Outputs */
+PIN 12 = TWOLINE;       /* rf12 */
+PIN 13 = !HSYNC;        /* rf13 */
+PIN 14 = SREGLD;        /* rf14 */
+PIN 15 = SC;            /* rf15 */
+PIN 16 = C2M;           /* rf16 */
+PIN 17 = rf17;          /* rf17 */
+PIN 18 = rf18;          /* rf18 */
+PIN 19 = HCTRRST;       /* rf19 */
+
+/* Keep every product term: some outputs are asynchronous latches and
+   rely on these terms, so the compiler must not reduce them. */
+MIN TWOLINE.d = 0;
+MIN HSYNC.d = 0;
+MIN SREGLD.d = 0;
+MIN SC.d = 0;
+MIN C2M.d = 0;
+MIN rf17.d = 0;
+MIN rf18.d = 0;
+MIN HCTRRST.d = 0;
+
+/* Logic */
+TWOLINE.d = !VIDTIME & !TWOLINE & HCTRRST
+          # !VIDTIME & TWOLINE & !HCTRRST
+          # VIDTIME & TWOLINE
+          # TWOLINE & C2M & !rf17 & !rf18 & HCTRRST;
+
+HSYNC.d = CNT0 & CNT1 & CNT6 & C2M
+        # !CNT0 & HSYNC
+        # !CNT1 & HSYNC
+        # !CNT2 & HSYNC
+        # !CNT3 & HSYNC
+        # CNT6 & HSYNC
+        # CNT0 & CNT1 & CNT2 & CNT3 & !CNT4 & !CNT5 & !CNT6 & HSYNC & !C2M;
+
+!SREGLD.d = SC;
+
+!SC.d = !VIDTIME
+      # CNT5 & CNT6 & VIDTIME
+      # CNT4 & CNT6 & VIDTIME
+      # CNT3 & CNT6 & VIDTIME
+      # CNT2 & CNT6 & VIDTIME
+      # CNT1 & CNT6 & VIDTIME
+      # CNT0 & CNT6 & VIDTIME;
+
+C2M.d = !VIDTIME & !C2M & rf17 & rf18
+      # !VIDTIME & C2M & !rf18
+      # !VIDTIME & C2M & !rf17
+      # VIDTIME;
+
+rf17.d = !VIDTIME & !rf17 & rf18
+       # !VIDTIME & rf17 & !rf18;
+
+rf18.d = !VIDTIME & !rf18;
+
+HCTRRST.d = CNT3 & CNT4 & !CNT5 & CNT6 & C2M & !rf17 & !rf18;

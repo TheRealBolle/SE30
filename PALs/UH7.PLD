@@ -1,0 +1,96 @@
+Name     UH7;
+PartNo   341S0689-C;
+Date     10/31/26;
+Revision 01;
+Designer Unknown;
+Company  None;
+Assembly SE30 Logicboard;
+Location UH7;
+Device   G16V8MA;
+/*
+===============================================================================
+                                 Chip Diagram
+===============================================================================
+
+                               ______________
+                              |     UH7      |
+                      GND ----|1           20|---- Vcc
+                    RCMUX --->|2           19|---- NC
+                     RASA --->|3           18|---> !RCMUX_OUT
+                   !WR_IN --->|4           17|<--- !R_W
+                     RASB --->|5           16|---> WR
+                      GND ----|6           15|---> RAMRWA
+                    CASLL --->|7           14|---- NC
+                   OSC32M --->|8           13|---> RAMRWB
+                       NC ----|9           12|---> C32M
+                      GND ----|10          11|---- GND
+                              |______________|
+
+  Arrows show signal direction:  ---> into the chip is an input, out of it
+  an output, ---- power, a tie-off or no connection.
+
+*/
+
+/**********************************************************************/
+/* UH7 (341S0689-C) - GAL16V8, complex mode.                          */
+/* Reconstructed from UH7_16v8.JED (EQN2JED output).                  */
+/* Signal names come from the macse30mlb schematic redraw. A `!` on a */
+/* PIN marks an active-low (`*`) net: the name is true when asserted. */
+/* Pins with no net keep their JEDEC label.                           */
+/* WR_IN is the schematic's WR*; RCMUX_OUT is its RCMUX*.             */
+/* The name after each PIN is the JEDEC NOTE PINS label.              */
+/* Pins 1, 6 and 11 are tied to GND; pins 9, 14, 19 are unconnected.  */
+/* OSC32M is not a schematic label: pin 8 is the Y2 oscillator pin.   */
+/* C32M leaves pin 12 through R28; RCMUX* leaves pin 18 through L15.  */
+/**********************************************************************/
+
+/* Inputs */
+PIN 2  = RCMUX;         /* i2 */
+PIN 3  = RASA;          /* i3 */
+PIN 4  = !WR_IN;        /* i4 */
+PIN 5  = RASB;          /* i5 */
+PIN 7  = CASLL;         /* i7 */
+PIN 8  = OSC32M;        /* i8 */
+PIN 17 = !R_W;          /* f17 */
+
+/* Outputs */
+PIN 12 = C32M;          /* o12 */
+PIN 13 = RAMRWB;        /* f13 */
+PIN 15 = RAMRWA;        /* f15 */
+PIN 16 = WR;            /* o16 */
+PIN 18 = !RCMUX_OUT;    /* o18 */
+
+/* In the NOTE PINS records, no signal on the schematic or tied off:
+   pin 1 (nc1): nc1
+   pin 6 (nc6): nc6
+   pin 9 (nc9): nc9
+   pin 11 (/i11): i11
+   pin 14 (o14): o14
+   pin 19 (o19): o19
+*/
+
+/* Keep every product term: some outputs are asynchronous latches and
+   rely on these terms, so the compiler must not reduce them. */
+MIN C32M = 0;
+MIN RAMRWB = 0;
+MIN RAMRWA = 0;
+MIN WR = 0;
+MIN RCMUX_OUT = 0;
+
+/* Logic */
+C32M.oe = 'b'1;
+!C32M = OSC32M;
+
+RAMRWB.oe = 'b'1;
+!RAMRWB = RASB & !CASLL & R_W
+        # RASB & !RAMRWB;
+
+RAMRWA.oe = 'b'1;
+!RAMRWA = RASA & !CASLL & R_W
+        # RASA & !RAMRWA;
+
+WR.oe = 'b'1;
+!WR = !WR_IN;
+
+RCMUX_OUT.oe = 'b'1;
+RCMUX_OUT = RCMUX;

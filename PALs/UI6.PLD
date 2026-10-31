@@ -1,0 +1,102 @@
+Name     UI6;
+PartNo   341-0665-A;
+Date     10/31/26;
+Revision 01;
+Designer Unknown;
+Company  None;
+Assembly SE30 Logicboard;
+Location UI6;
+Device   G16V8MS;
+/*
+===============================================================================
+                                 Chip Diagram
+===============================================================================
+
+                               ______________
+                              |     UI6      |
+                     C32M --->|1           20|---- Vcc
+                     C16G --->|2           19|---> !AS
+                     !LAS --->|3           18|<--- !HSYNC
+                   !VSYNC --->|4           17|---> C16M
+                 !VSYNCEN --->|5           16|---> rf16
+                      FC2 --->|6           15|---> rf15
+                      FC1 --->|7           14|---> rf14
+                      FC0 --->|8           13|---> !IRQ6
+                  !LBGACK --->|9           12|---> !BERR
+                      GND ----|10          11|<--- !OE
+                              |______________|
+
+  Arrows show signal direction:  ---> into the chip is an input, out of it
+  an output, ---- power, a tie-off or no connection.
+
+  Pin 1 is the register clock. Pin 11 is !OE, on pulldown net PD15.
+
+*/
+
+/**********************************************************************/
+/* UI6 (341-0665-A) - GAL16V8, registered mode.                       */
+/* Reconstructed from UI6_16v8.JED (EQN2JED output).                  */
+/* Signal names come from the macse30mlb schematic redraw. A `!` on a */
+/* PIN marks an active-low (`*`) net: the name is true when asserted. */
+/* Pins with no net keep their JEDEC label.                           */
+/* The name after each PIN is the JEDEC NOTE PINS label.              */
+/* Pin 13 is IRQ*(6) by its stub label on the CPU+FPU sheet.          */
+/* C16M leaves pin 17 through R29.                                    */
+/**********************************************************************/
+
+/* Pin 1 (CLK) and pin 11 (/OE) are dedicated in this mode. */
+
+/* Inputs */
+PIN 2  = C16G;          /* i2 */
+PIN 3  = !LAS;          /* i3 */
+PIN 4  = !VSYNC;        /* i4 */
+PIN 5  = !VSYNCEN;      /* i5 */
+PIN 6  = FC2;           /* i6 */
+PIN 7  = FC1;           /* i7 */
+PIN 8  = FC0;           /* i8 */
+PIN 18 = !HSYNC;        /* i18 */
+
+/* Connected on the schematic, but not used by the logic */
+PIN 9  = !LBGACK;       /* not in NOTE PINS */
+
+/* Outputs */
+PIN 12 = !BERR;         /* o12 */
+PIN 13 = !IRQ6;         /* f13 */
+PIN 14 = rf14;          /* rf14 */
+PIN 15 = rf15;          /* rf15 */
+PIN 16 = rf16;          /* rf16 */
+PIN 17 = C16M;          /* ro17 */
+PIN 19 = !AS;           /* f19 */
+
+/* Keep every product term: some outputs are asynchronous latches and
+   rely on these terms, so the compiler must not reduce them. */
+MIN BERR = 0;
+MIN IRQ6 = 0;
+MIN rf14.d = 0;
+MIN rf15.d = 0;
+MIN rf16.d = 0;
+MIN C16M.d = 0;
+MIN AS = 0;
+
+/* Logic */
+BERR.oe = !rf14 & !rf15 & !HSYNC & AS;
+BERR = LAS;
+
+IRQ6.oe = 'b'1;
+IRQ6 = VSYNCEN & IRQ6
+     # VSYNC & VSYNCEN & !rf16;
+
+!rf14.d = LAS & !rf14
+        # LAS & !HSYNC;
+
+!rf15.d = LAS & !rf15
+        # LAS & !rf14 & HSYNC;
+
+!rf16.d = !VSYNC;
+
+!C16M.d = C16G;
+
+AS.oe = 'b'1;
+AS = LAS & !FC0
+   # LAS & !FC1
+   # LAS & !FC2;

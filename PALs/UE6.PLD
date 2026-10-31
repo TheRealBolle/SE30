@@ -1,0 +1,121 @@
+Name     UE6;
+PartNo   341-0754-A;
+Date     10/31/26;
+Revision 01;
+Designer Unknown;
+Company  None;
+Assembly SE30 Logicboard;
+Location UE6;
+Device   G16V8MA;
+/*
+===============================================================================
+                                 Chip Diagram
+===============================================================================
+
+                               ______________
+                              |     UE6      |
+                   VIDREQ --->|1           20|---- Vcc
+                     C16M --->|2           19|---> !VIDROM
+                    VIDS4 --->|3           18|---> !VC
+                    VIDS3 --->|4           17|---> !DSACK0
+                    VIDS2 --->|5           16|---- NC (f16)
+                    VIDS1 --->|6           15|---> !DOE
+                    VIDS0 --->|7           14|---- NC (f14)
+                    VID_V --->|8           13|---> !VIDMUX
+                     !R_W --->|9           12|---> !VIDW
+                      GND ----|10          11|<--- A16
+                              |______________|
+
+  Arrows show signal direction:  ---> into the chip is an input, out of it
+  an output, ---- power, a tie-off or no connection.
+
+  Pins 14 and 16 are NC on the schematic, but the chip still drives them.
+  f16 is internal state fed back into the logic; nothing reads f14.
+  Leave both unconnected.
+
+*/
+
+/**********************************************************************/
+/* UE6 (341-0754-A) - GAL16V8, complex mode.                          */
+/* Reconstructed from UE6_16v8.JED (EQN2JED output).                  */
+/* Signal names come from the macse30mlb schematic redraw. A `!` on a */
+/* PIN marks an active-low (`*`) net: the name is true when asserted. */
+/* Pins with no net keep their JEDEC label.                           */
+/* The name after each PIN is the JEDEC NOTE PINS label.              */
+/**********************************************************************/
+
+/* Inputs */
+PIN 1  = VIDREQ;        /* nc1: connected, but not used by the logic */
+PIN 2  = C16M;          /* i2 */
+PIN 3  = VIDS4;         /* i3 */
+PIN 4  = VIDS3;         /* i4 */
+PIN 5  = VIDS2;         /* i5 */
+PIN 6  = VIDS1;         /* i6 */
+PIN 7  = VIDS0;         /* i7 */
+PIN 8  = VID_V;         /* i8 */
+PIN 9  = !R_W;          /* i9 */
+PIN 11 = A16;           /* i11 */
+
+/* Outputs */
+PIN 12 = !VIDW;         /* o12 */
+PIN 13 = !VIDMUX;       /* f13 */
+PIN 14 = f14;           /* f14 */
+PIN 15 = !DOE;          /* f15 */
+PIN 16 = f16;           /* f16 */
+PIN 17 = !DSACK0;       /* f17 */
+PIN 18 = !VC;           /* f18 */
+PIN 19 = !VIDROM;       /* o19 */
+
+/* Keep every product term: some outputs are asynchronous latches and
+   rely on these terms, so the compiler must not reduce them. */
+MIN VIDW = 0;
+MIN VIDMUX = 0;
+MIN f14 = 0;
+MIN DOE = 0;
+MIN f16 = 0;
+MIN DSACK0 = 0;
+MIN VC = 0;
+MIN VIDROM = 0;
+
+/* Logic */
+VIDW.oe = 'b'1;
+VIDW = VID_V & R_W & !A16 & VIDMUX;
+
+VIDMUX.oe = 'b'1;
+!VIDMUX = !VIDS3 & VIDS0 & VIDMUX
+        # !VIDS4 & !VIDMUX
+        # C16M & !VIDMUX
+        # VIDS3 & !VIDMUX
+        # VIDS2 & !VIDMUX
+        # VIDS1 & !VIDMUX
+        # VIDS0 & !VIDMUX;
+
+f14.oe = 'b'1;
+f14 = VIDS4 & VIDS3 & VIDS2 & VIDS1 & !VIDS0;
+
+DOE.oe = 'b'1;
+DOE = !VIDS4 & !VIDS3 & !VIDS2 & !VIDS1 & !VIDS0 & VID_V & !R_W & !A16
+    # VIDS4 & VIDS3 & !VIDS2 & !VIDS1 & !VIDS0 & !VID_V
+    # !VIDS0 & DOE;
+
+f16.oe = 'b'1;
+!f16 = VIDS4 & !VIDS3 & !VIDS2 & !VIDS1 & !VIDS0 & VID_V
+     # VIDS3 & VID_V & !f16
+     # !VIDS0 & VID_V & !f16;
+
+DSACK0.oe = !f16;
+/* DSACK0 is read back while tri-stated: needs a defined level on the pin. */
+DSACK0 = !VIDS4 & VIDS3 & !VIDS0 & !f16
+       # !VIDS0 & VID_V & DSACK0;
+
+VC.oe = 'b'1;
+!VC = !VIDS3 & VIDS0 & VID_V
+    # VIDS4 & VIDS3 & VIDS2 & VIDS1 & !VIDS0 & !VID_V
+    # VIDS4 & !VC
+    # VIDS3 & !VC
+    # VIDS2 & !VC
+    # VIDS1 & !VC
+    # VIDS0 & !VC;
+
+VIDROM.oe = 'b'1;
+VIDROM = A16 & !f16;

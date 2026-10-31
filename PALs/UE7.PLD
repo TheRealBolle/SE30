@@ -1,0 +1,139 @@
+Name     UE7;
+PartNo   341-0755-A;
+Date     10/31/26;
+Revision 01;
+Designer Unknown;
+Company  None;
+Assembly SE30 Logicboard;
+Location UE7;
+Device   G16V8MS;
+/*
+===============================================================================
+                                 Chip Diagram
+===============================================================================
+
+                               ______________
+                              |     UE7      |
+                     C16M --->|1           20|---- Vcc
+                       NC ----|2           19|---> VIDREQ
+                   !HSYNC --->|3           18|---> !VR
+                   SLTE_F --->|4           17|---> VIDS4
+                      A24 --->|5           16|---> VIDS3
+                   !NUBUS --->|6           15|---> VIDS2
+                       NC ----|7           14|---> VIDS1
+                       NC ----|8           13|---> VIDS0
+                  VIDTIME --->|9           12|---> VID_V
+                      GND ----|10          11|<--- !OE
+                              |______________|
+
+  Arrows show signal direction:  ---> into the chip is an input, out of it
+  an output, ---- power, a tie-off or no connection.
+
+  Pin 1 is the register clock. Pin 11 is !OE, on pulldown net PD8.
+
+*/
+
+/**********************************************************************/
+/* UE7 (341-0755-A) - GAL16V8, registered mode.                       */
+/* Reconstructed from UE7_16v8.JED (EQN2JED output).                  */
+/* Signal names come from the macse30mlb schematic redraw. A `!` on a */
+/* PIN marks an active-low (`*`) net: the name is true when asserted. */
+/* Pins with no net keep their JEDEC label.                           */
+/* The name after each PIN is the JEDEC NOTE PINS label.              */
+/* Pins 2, 7 and 8 are unconnected on the schematic.                  */
+/**********************************************************************/
+
+/* Pin 1 (CLK) and pin 11 (/OE) are dedicated in this mode. */
+
+/* Inputs */
+PIN 3  = !HSYNC;        /* i3 */
+PIN 4  = SLTE_F;        /* i4 */
+PIN 5  = A24;           /* i5 */
+PIN 6  = !NUBUS;        /* i6 */
+
+/* Connected on the schematic, but not used by the logic */
+PIN 9  = VIDTIME;       /* i9 */
+
+/* Outputs */
+PIN 12 = VID_V;         /* rf12 */
+PIN 13 = VIDS0;         /* rf13 */
+PIN 14 = VIDS1;         /* rf14 */
+PIN 15 = VIDS2;         /* rf15 */
+PIN 16 = VIDS3;         /* rf16 */
+PIN 17 = VIDS4;         /* rf17 */
+PIN 18 = !VR;           /* rf18 */
+PIN 19 = VIDREQ;        /* rf19 */
+
+/* In the NOTE PINS records, no signal on the schematic or tied off:
+   pin 2 (i2): i2
+   pin 7 (i7): i7
+   pin 8 (i8): i8
+*/
+
+/* Keep every product term: some outputs are asynchronous latches and
+   rely on these terms, so the compiler must not reduce them. */
+MIN VID_V.d = 0;
+MIN VIDS0.d = 0;
+MIN VIDS1.d = 0;
+MIN VIDS2.d = 0;
+MIN VIDS3.d = 0;
+MIN VIDS4.d = 0;
+MIN VR.d = 0;
+MIN VIDREQ.d = 0;
+
+/* Logic */
+!VID_V.d = HSYNC & VID_V & !VIDS3 & VIDS4 & !VR & VIDREQ
+         # !VID_V & VIDS0
+         # !VID_V & !VIDS2
+         # !VID_V & !VIDS3
+         # !VID_V & !VIDS4
+         # !VID_V & VIDS1;
+
+!VIDS0.d = HSYNC & VIDS0 & !VIDS3 & VIDS4 & !VR & VIDREQ
+         # !SLTE_F & !A24 & NUBUS & VIDS0 & VIDS3 & VIDS4 & !VR
+         # VIDS1 & !VIDS2 & VIDS3 & !VIDS4 & VIDREQ
+         # !VIDS1 & VIDS2 & VIDS3 & !VIDS4 & !VR & VIDREQ
+         # !VIDS0 & !VIDS2 & !VIDS3
+         # !VIDS0 & !VIDS2 & VIDS4
+         # !VIDS0 & VIDS1 & VR
+         # !VIDS0 & VIDS1 & !VIDS3 & !VIDS4;
+
+VIDS1.d = !VID_V & !VIDS0 & !VIDS1 & VIDS2 & VIDS3 & !VIDS4 & !VR & VIDREQ
+        # !VID_V & VIDS0 & !VIDS2 & !VIDS3 & !VIDS4 & !VR & VIDREQ
+        # !VID_V & VIDS0 & VIDS1 & VIDS2 & !VIDS3 & !VIDS4 & VR & VIDREQ
+        # !VID_V & !VIDS0 & VIDS1 & !VIDS2 & !VIDS4 & !VR & VIDREQ
+        # !VID_V & !VIDS0 & VIDS1 & VIDS2 & VIDS3 & !VIDS4 & VR & VIDREQ
+        # !VID_V & VIDS0 & VIDS1 & VIDS3 & !VIDS4 & VR & VIDREQ;
+
+VIDS2.d = VIDS1 & !VIDS2 & !VIDS3 & !VIDS4 & !VR & VIDREQ
+        # !VID_V & VIDS2 & !VIDS3 & !VIDS4 & VR & VIDREQ
+        # !VID_V & !VIDS1 & VIDS2 & VIDS3 & !VIDS4 & !VR & VIDREQ
+        # !VID_V & !VIDS0 & VIDS1 & VIDS2 & VIDS3 & VR & VIDREQ
+        # !VID_V & !VIDS0 & VIDS2 & VIDS3 & VIDS4 & VR & VIDREQ;
+
+!VIDS3.d = !VIDS2 & VIDS3 & VIDS4 & !VR
+         # VIDS0 & !VIDS1 & !VIDS2 & VIDS3 & !VIDS4 & VR
+         # VIDS1 & VIDS3 & !VIDS4 & !VR
+         # !VIDS3 & !VIDS4 & !VR
+         # !VIDS3 & VIDS4 & VR
+         # !VIDS0 & VIDS1 & VIDS2 & !VIDS3 & !VIDS4 & VR
+         # !VIDS0 & !VIDS1 & VIDS2 & !VIDS3 & !VIDS4 & VR;
+
+!VIDS4.d = VIDS2 & !VIDS3 & !VIDS4 & VR
+         # !VIDS0 & VIDS1 & !VIDS2 & !VIDS4 & !VR
+         # !VIDS1 & VIDS2 & VIDS3 & !VIDS4 & !VR
+         # !VID_V & VIDS0 & !VIDS2 & !VIDS3 & !VIDS4 & !VR
+         # !VIDS0 & !VIDS1 & !VIDS2 & !VIDS3 & VR
+         # VIDS0 & VIDS1 & VIDS3 & !VIDS4 & VR
+         # !VIDS1 & !VIDS2 & VIDS3 & !VIDS4 & VR;
+
+VR.d = !VIDS0 & !VIDS1 & !VIDS2
+     # !VIDS0 & !VIDS1 & !VIDS4
+     # VIDS1 & VIDS2 & !VIDS4
+     # VIDS1 & !VIDS3 & !VIDS4
+     # !VIDS0 & VIDS1 & VIDS2 & VIDS3
+     # !SLTE_F & !A24 & NUBUS & VID_V & !VIDS1 & !VIDS2 & VIDS3 & VIDS4;
+
+!VIDREQ.d = !VID_V & !VIDS0 & !VIDS1 & VIDS2 & VIDS3 & VIDS4 & VR
+          # VIDS2 & !VIDREQ
+          # HSYNC & !VIDREQ;
