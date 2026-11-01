@@ -78,6 +78,29 @@ MIN rf16.d = 0;
 MIN C16M_RES.d = 0;
 MIN AS = 0;
 
+/* Clear the PTD fuses (2128 + row) of the unused product terms, as the
+   JEDEC does. Every one of these rows is blank, so its term is always
+   false and this changes no logic. CUPL normally leaves PTD set, and its
+   manual reserves FUSE for MISER and TURBO bits, so each use warns "Fuse
+   n is blown to 0". The numbers are checked against UI6_16v8.JED, and
+   they are right only for this device: recheck them if the logic moves
+   to other rows. */
+FUSE(2132,0); FUSE(2133,0); FUSE(2134,0); FUSE(2135,0);
+FUSE(2136,0); FUSE(2137,0); FUSE(2138,0); FUSE(2139,0);
+FUSE(2140,0); FUSE(2141,0); FUSE(2142,0); FUSE(2143,0);
+FUSE(2145,0); FUSE(2146,0); FUSE(2147,0); FUSE(2148,0);
+FUSE(2149,0); FUSE(2150,0); FUSE(2151,0);
+FUSE(2153,0); FUSE(2154,0); FUSE(2155,0); FUSE(2156,0);
+FUSE(2157,0); FUSE(2158,0); FUSE(2159,0);
+FUSE(2162,0); FUSE(2163,0); FUSE(2164,0); FUSE(2165,0);
+FUSE(2166,0); FUSE(2167,0);
+FUSE(2170,0); FUSE(2171,0); FUSE(2172,0); FUSE(2173,0);
+FUSE(2174,0); FUSE(2175,0);
+FUSE(2179,0); FUSE(2180,0); FUSE(2181,0); FUSE(2182,0);
+FUSE(2183,0);
+FUSE(2186,0); FUSE(2187,0); FUSE(2188,0); FUSE(2189,0);
+FUSE(2190,0); FUSE(2191,0);
+
 /* Logic */
 BERR.oe = !rf14 & !rf15 & !HSYNC & AS;
 BERR = LAS;
@@ -86,15 +109,18 @@ IRQ6.oe = 'b'1;
 IRQ6 = VSYNCEN & IRQ6
      # VSYNC & VSYNCEN & !rf16;
 
-!rf14.d = LAS & !rf14
-        # LAS & !HSYNC;
+rf14.d = !(LAS & !rf14
+         # LAS & !HSYNC);
 
-!rf15.d = LAS & !rf15
-        # LAS & !rf14 & HSYNC;
+rf15.d = !(LAS & !rf15
+         # LAS & !rf14 & HSYNC);
 
-!rf16.d = !VSYNC;
+/* The & 'b'1 below is deliberate: CUPL reduces !(A) to !A, which flips the
+   XOR polarity and the input sense. The logic would be the same, but the
+   fuses would no longer match the JEDEC. */
+rf16.d = !(!VSYNC & 'b'1);
 
-!C16M_RES.d = C16G;
+C16M_RES.d = !(C16G & 'b'1);
 
 AS.oe = 'b'1;
 AS = LAS & !FC0

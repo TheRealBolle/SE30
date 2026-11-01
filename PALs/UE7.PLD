@@ -82,21 +82,21 @@ MIN VR.d = 0;
 MIN VIDREQ.d = 0;
 
 /* Logic */
-!VID_V.d = HSYNC & VID_V & !VIDS3 & VIDS4 & !VR & VIDREQ
-         # !VID_V & VIDS0
-         # !VID_V & !VIDS2
-         # !VID_V & !VIDS3
-         # !VID_V & !VIDS4
-         # !VID_V & VIDS1;
+VID_V.d = !(HSYNC & VID_V & !VIDS3 & VIDS4 & !VR & VIDREQ
+          # !VID_V & VIDS0
+          # !VID_V & !VIDS2
+          # !VID_V & !VIDS3
+          # !VID_V & !VIDS4
+          # !VID_V & VIDS1);
 
-!VIDS0.d = HSYNC & VIDS0 & !VIDS3 & VIDS4 & !VR & VIDREQ
-         # !SLTE_F & !A24 & NUBUS & VIDS0 & VIDS3 & VIDS4 & !VR
-         # VIDS1 & !VIDS2 & VIDS3 & !VIDS4 & VIDREQ
-         # !VIDS1 & VIDS2 & VIDS3 & !VIDS4 & !VR & VIDREQ
-         # !VIDS0 & !VIDS2 & !VIDS3
-         # !VIDS0 & !VIDS2 & VIDS4
-         # !VIDS0 & VIDS1 & VR
-         # !VIDS0 & VIDS1 & !VIDS3 & !VIDS4;
+VIDS0.d = !(HSYNC & VIDS0 & !VIDS3 & VIDS4 & !VR & VIDREQ
+          # !SLTE_F & !A24 & NUBUS & VIDS0 & VIDS3 & VIDS4 & !VR
+          # VIDS1 & !VIDS2 & VIDS3 & !VIDS4 & VIDREQ
+          # !VIDS1 & VIDS2 & VIDS3 & !VIDS4 & !VR & VIDREQ
+          # !VIDS0 & !VIDS2 & !VIDS3
+          # !VIDS0 & !VIDS2 & VIDS4
+          # !VIDS0 & VIDS1 & VR
+          # !VIDS0 & VIDS1 & !VIDS3 & !VIDS4);
 
 VIDS1.d = !VID_V & !VIDS0 & !VIDS1 & VIDS2 & VIDS3 & !VIDS4 & !VR & VIDREQ
         # !VID_V & VIDS0 & !VIDS2 & !VIDS3 & !VIDS4 & !VR & VIDREQ
@@ -111,21 +111,21 @@ VIDS2.d = VIDS1 & !VIDS2 & !VIDS3 & !VIDS4 & !VR & VIDREQ
         # !VID_V & !VIDS0 & VIDS1 & VIDS2 & VIDS3 & VR & VIDREQ
         # !VID_V & !VIDS0 & VIDS2 & VIDS3 & VIDS4 & VR & VIDREQ;
 
-!VIDS3.d = !VIDS2 & VIDS3 & VIDS4 & !VR
-         # VIDS0 & !VIDS1 & !VIDS2 & VIDS3 & !VIDS4 & VR
-         # VIDS1 & VIDS3 & !VIDS4 & !VR
-         # !VIDS3 & !VIDS4 & !VR
-         # !VIDS3 & VIDS4 & VR
-         # !VIDS0 & VIDS1 & VIDS2 & !VIDS3 & !VIDS4 & VR
-         # !VIDS0 & !VIDS1 & VIDS2 & !VIDS3 & !VIDS4 & VR;
+VIDS3.d = !(!VIDS2 & VIDS3 & VIDS4 & !VR
+          # VIDS0 & !VIDS1 & !VIDS2 & VIDS3 & !VIDS4 & VR
+          # VIDS1 & VIDS3 & !VIDS4 & !VR
+          # !VIDS3 & !VIDS4 & !VR
+          # !VIDS3 & VIDS4 & VR
+          # !VIDS0 & VIDS1 & VIDS2 & !VIDS3 & !VIDS4 & VR
+          # !VIDS0 & !VIDS1 & VIDS2 & !VIDS3 & !VIDS4 & VR);
 
-!VIDS4.d = VIDS2 & !VIDS3 & !VIDS4 & VR
-         # !VIDS0 & VIDS1 & !VIDS2 & !VIDS4 & !VR
-         # !VIDS1 & VIDS2 & VIDS3 & !VIDS4 & !VR
-         # !VID_V & VIDS0 & !VIDS2 & !VIDS3 & !VIDS4 & !VR
-         # !VIDS0 & !VIDS1 & !VIDS2 & !VIDS3 & VR
-         # VIDS0 & VIDS1 & VIDS3 & !VIDS4 & VR
-         # !VIDS1 & !VIDS2 & VIDS3 & !VIDS4 & VR;
+VIDS4.d = !(VIDS2 & !VIDS3 & !VIDS4 & VR
+          # !VIDS0 & VIDS1 & !VIDS2 & !VIDS4 & !VR
+          # !VIDS1 & VIDS2 & VIDS3 & !VIDS4 & !VR
+          # !VID_V & VIDS0 & !VIDS2 & !VIDS3 & !VIDS4 & !VR
+          # !VIDS0 & !VIDS1 & !VIDS2 & !VIDS3 & VR
+          # VIDS0 & VIDS1 & VIDS3 & !VIDS4 & VR
+          # !VIDS1 & !VIDS2 & VIDS3 & !VIDS4 & VR);
 
 VR.d = !VIDS0 & !VIDS1 & !VIDS2
      # !VIDS0 & !VIDS1 & !VIDS4
@@ -134,6 +134,6 @@ VR.d = !VIDS0 & !VIDS1 & !VIDS2
      # !VIDS0 & VIDS1 & VIDS2 & VIDS3
      # !SLTE_F & !A24 & NUBUS & VID_V & !VIDS1 & !VIDS2 & VIDS3 & VIDS4;
 
-!VIDREQ.d = !VID_V & !VIDS0 & !VIDS1 & VIDS2 & VIDS3 & VIDS4 & VR
-          # VIDS2 & !VIDREQ
-          # HSYNC & !VIDREQ;
+VIDREQ.d = !(!VID_V & !VIDS0 & !VIDS1 & VIDS2 & VIDS3 & VIDS4 & VR
+           # VIDS2 & !VIDREQ
+           # HSYNC & !VIDREQ);

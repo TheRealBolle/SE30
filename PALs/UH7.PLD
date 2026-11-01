@@ -61,13 +61,16 @@ PIN 15 = RAMRWA;        /* f15 */
 PIN 16 = WR;            /* o16 */
 PIN 18 = !RCMUX_OUT;    /* o18 */
 
+/* Unconnected, but outputs in the JEDEC: declared so that their XOR
+   fuses match it. Both are permanently disabled, so they stay tri-stated. */
+PIN 14 = o14;           /* o14 */
+PIN 19 = o19;           /* o19 */
+
 /* In the NOTE PINS records, no signal on the schematic or tied off:
    pin 1 (nc1): nc1
    pin 6 (nc6): nc6
    pin 9 (nc9): nc9
    pin 11 (/i11): i11
-   pin 14 (o14): o14
-   pin 19 (o19): o19
 */
 
 /* Keep every product term: some outputs are asynchronous latches and
@@ -79,19 +82,28 @@ MIN WR = 0;
 MIN RCMUX_OUT = 0;
 
 /* Logic */
+o14.oe = 'b'0;
+o14 = 'b'0;
+
+o19.oe = 'b'0;
+o19 = 'b'0;
+
 C32M_RES.oe = 'b'1;
-!C32M_RES = OSC32M;
+/* The & 'b'1 below is deliberate: CUPL reduces !(A) to !A, which flips the
+   XOR polarity and the input sense. The logic would be the same, but the
+   fuses would no longer match the JEDEC. */
+C32M_RES = !(OSC32M & 'b'1);
 
 RAMRWB.oe = 'b'1;
-!RAMRWB = RASB & !CASLL & R_W
-        # RASB & !RAMRWB;
+RAMRWB = !(RASB & !CASLL & R_W
+         # RASB & !RAMRWB);
 
 RAMRWA.oe = 'b'1;
-!RAMRWA = RASA & !CASLL & R_W
-        # RASA & !RAMRWA;
+RAMRWA = !(RASA & !CASLL & R_W
+         # RASA & !RAMRWA);
 
 WR.oe = 'b'1;
-!WR = !WR_IN;
+WR = !(!WR_IN & 'b'1);
 
 RCMUX_OUT.oe = 'b'1;
 RCMUX_OUT = RCMUX;

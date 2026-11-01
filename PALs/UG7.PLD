@@ -92,15 +92,18 @@ HSYNC.d = CNT0 & CNT1 & CNT6 & C2M
         # CNT6 & HSYNC
         # CNT0 & CNT1 & CNT2 & CNT3 & !CNT4 & !CNT5 & !CNT6 & HSYNC & !C2M;
 
-!SREGLD.d = SC;
+/* The & 'b'1 below is deliberate: CUPL reduces !(A) to !A, which flips the
+   XOR polarity and the input sense. The logic would be the same, but the
+   fuses would no longer match the JEDEC. */
+SREGLD.d = !(SC & 'b'1);
 
-!SC.d = !VIDTIME
-      # CNT5 & CNT6 & VIDTIME
-      # CNT4 & CNT6 & VIDTIME
-      # CNT3 & CNT6 & VIDTIME
-      # CNT2 & CNT6 & VIDTIME
-      # CNT1 & CNT6 & VIDTIME
-      # CNT0 & CNT6 & VIDTIME;
+SC.d = !(!VIDTIME
+       # CNT5 & CNT6 & VIDTIME
+       # CNT4 & CNT6 & VIDTIME
+       # CNT3 & CNT6 & VIDTIME
+       # CNT2 & CNT6 & VIDTIME
+       # CNT1 & CNT6 & VIDTIME
+       # CNT0 & CNT6 & VIDTIME);
 
 C2M.d = !VIDTIME & !C2M & rf17 & rf18
       # !VIDTIME & C2M & !rf18

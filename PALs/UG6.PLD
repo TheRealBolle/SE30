@@ -94,13 +94,13 @@ VSYNC.d = !VADR1 & VADR2 & VADR3 & !VADR4 & VADR5 & VADR7 & !rf17 & rf18 & !rf19
 
 LCTRRST.d = VADR1 & VADR3 & VADR4 & VADR5 & VADR7 & !rf17 & rf18 & !rf19;
 
-!rf16.d = VADR2 & VADR3 & !VADR4 & VADR5 & VADR7 & !rf17 & !rf18 & rf19
-        # VADR7 & !rf16
-        # !VADR0 & !rf16
-        # VADR0 & !VADR7 & !rf16 & rf17
-        # VADR0 & !VADR7 & !rf16 & !rf17 & !rf18 & !rf19
-        # VADR0 & !VADR7 & !rf16 & !rf17 & rf18 & !rf19
-        # VADR0 & !VADR7 & !rf16 & !rf17 & rf18 & rf19;
+rf16.d = !(VADR2 & VADR3 & !VADR4 & VADR5 & VADR7 & !rf17 & !rf18 & rf19
+         # VADR7 & !rf16
+         # !VADR0 & !rf16
+         # VADR0 & !VADR7 & !rf16 & rf17
+         # VADR0 & !VADR7 & !rf16 & !rf17 & !rf18 & !rf19
+         # VADR0 & !VADR7 & !rf16 & !rf17 & rf18 & !rf19
+         # VADR0 & !VADR7 & !rf16 & !rf17 & rf18 & rf19);
 
 rf17.d = !rf17 & rf18 & rf19
        # rf17 & !rf19

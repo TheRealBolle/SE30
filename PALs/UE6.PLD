@@ -82,13 +82,13 @@ VIDW.oe = 'b'1;
 VIDW = VID_V & R_W & !A16_ROM_39 & VIDMUX;
 
 VIDMUX.oe = 'b'1;
-!VIDMUX = !VIDS3 & VIDS0 & VIDMUX
-        # !VIDS4 & !VIDMUX
-        # C16M & !VIDMUX
-        # VIDS3 & !VIDMUX
-        # VIDS2 & !VIDMUX
-        # VIDS1 & !VIDMUX
-        # VIDS0 & !VIDMUX;
+VIDMUX = !(!VIDS3 & VIDS0 & VIDMUX
+         # !VIDS4 & !VIDMUX
+         # C16M & !VIDMUX
+         # VIDS3 & !VIDMUX
+         # VIDS2 & !VIDMUX
+         # VIDS1 & !VIDMUX
+         # VIDS0 & !VIDMUX);
 
 f14.oe = 'b'1;
 f14 = VIDS4 & VIDS3 & VIDS2 & VIDS1 & !VIDS0;
@@ -99,9 +99,9 @@ DOE = !VIDS4 & !VIDS3 & !VIDS2 & !VIDS1 & !VIDS0 & VID_V & !R_W & !A16_ROM_39
     # !VIDS0 & DOE;
 
 f16.oe = 'b'1;
-!f16 = VIDS4 & !VIDS3 & !VIDS2 & !VIDS1 & !VIDS0 & VID_V
-     # VIDS3 & VID_V & !f16
-     # !VIDS0 & VID_V & !f16;
+f16 = !(VIDS4 & !VIDS3 & !VIDS2 & !VIDS1 & !VIDS0 & VID_V
+      # VIDS3 & VID_V & !f16
+      # !VIDS0 & VID_V & !f16);
 
 DSACK0.oe = !f16;
 /* DSACK0 is read back while tri-stated: needs a defined level on the pin. */
@@ -109,13 +109,13 @@ DSACK0 = !VIDS4 & VIDS3 & !VIDS0 & !f16
        # !VIDS0 & VID_V & DSACK0;
 
 VC.oe = 'b'1;
-!VC = !VIDS3 & VIDS0 & VID_V
-    # VIDS4 & VIDS3 & VIDS2 & VIDS1 & !VIDS0 & !VID_V
-    # VIDS4 & !VC
-    # VIDS3 & !VC
-    # VIDS2 & !VC
-    # VIDS1 & !VC
-    # VIDS0 & !VC;
+VC = !(!VIDS3 & VIDS0 & VID_V
+     # VIDS4 & VIDS3 & VIDS2 & VIDS1 & !VIDS0 & !VID_V
+     # VIDS4 & !VC
+     # VIDS3 & !VC
+     # VIDS2 & !VC
+     # VIDS1 & !VC
+     # VIDS0 & !VC);
 
 VIDROM.oe = 'b'1;
 VIDROM = A16_ROM_39 & !f16;
