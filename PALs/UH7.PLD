@@ -1,5 +1,5 @@
 Name     UH7;
-PartNo   341S0689-C;
+PartNo   ;
 Date     10/31/26;
 Revision 01;
 Designer Unknown;
@@ -34,6 +34,8 @@ Device   G16V8MA;
 /**********************************************************************/
 /* UH7 (341S0689-C) - GAL16V8, complex mode.                          */
 /* Reconstructed from UH7_16v8.JED (EQN2JED output).                  */
+/* PartNo is blank because CUPL writes it into the signature fuses,   */
+/* which are all zero in the JEDEC.                                   */
 /* Signal names come from the macse30mlb schematic redraw. A `!` on a */
 /* PIN marks an active-low (`*`) net: the name is true when asserted. */
 /* Pins with no net keep their JEDEC label.                           */

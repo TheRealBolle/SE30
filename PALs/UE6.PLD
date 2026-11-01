@@ -1,5 +1,5 @@
 Name     UE6;
-PartNo   341-0754-A;
+PartNo   ;
 Date     10/31/26;
 Revision 01;
 Designer Unknown;
@@ -38,6 +38,8 @@ Device   G16V8MA;
 /**********************************************************************/
 /* UE6 (341-0754-A) - GAL16V8, complex mode.                          */
 /* Reconstructed from UE6_16v8.JED (EQN2JED output).                  */
+/* PartNo is blank because CUPL writes it into the signature fuses,   */
+/* which are all zero in the JEDEC.                                   */
 /* Signal names come from the macse30mlb schematic redraw. A `!` on a */
 /* PIN marks an active-low (`*`) net: the name is true when asserted. */
 /* Pins with no net keep their JEDEC label.                           */
