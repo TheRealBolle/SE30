@@ -17,19 +17,19 @@ Device   G16V8MS;
                      C32M --->|1           20|---- Vcc
                      C16G --->|2           19|---> !AS
                      !LAS --->|3           18|<--- !HSYNC
-                   !VSYNC --->|4           17|---> C16M
+                   !VSYNC --->|4           17|---> C16M_RES
                  !VSYNCEN --->|5           16|---> rf16
                       FC2 --->|6           15|---> rf15
                       FC1 --->|7           14|---> rf14
                       FC0 --->|8           13|---> !IRQ6
                   !LBGACK --->|9           12|---> !BERR
-                      GND ----|10          11|<--- !OE
+                      GND ----|10          11|<--- PD15
                               |______________|
 
   Arrows show signal direction:  ---> into the chip is an input, out of it
   an output, ---- power, a tie-off or no connection.
 
-  Pin 1 is the register clock. Pin 11 is !OE, on pulldown net PD15.
+  Pin 1 is the register clock. Pin 11 is output enable, held low by PD15.
 
 */
 
@@ -41,7 +41,7 @@ Device   G16V8MS;
 /* Pins with no net keep their JEDEC label.                           */
 /* The name after each PIN is the JEDEC NOTE PINS label.              */
 /* Pin 13 is IRQ*(6) by its stub label on the CPU+FPU sheet.          */
-/* C16M leaves pin 17 through R29.                                    */
+/* C16M_RES is pin 17's net, which reaches C16M through R29.          */
 /**********************************************************************/
 
 /* Pin 1 (CLK) and pin 11 (/OE) are dedicated in this mode. */
@@ -65,7 +65,7 @@ PIN 13 = !IRQ6;         /* f13 */
 PIN 14 = rf14;          /* rf14 */
 PIN 15 = rf15;          /* rf15 */
 PIN 16 = rf16;          /* rf16 */
-PIN 17 = C16M;          /* ro17 */
+PIN 17 = C16M_RES;      /* ro17 */
 PIN 19 = !AS;           /* f19 */
 
 /* Keep every product term: some outputs are asynchronous latches and
@@ -75,7 +75,7 @@ MIN IRQ6 = 0;
 MIN rf14.d = 0;
 MIN rf15.d = 0;
 MIN rf16.d = 0;
-MIN C16M.d = 0;
+MIN C16M_RES.d = 0;
 MIN AS = 0;
 
 /* Logic */
@@ -94,7 +94,7 @@ IRQ6 = VSYNCEN & IRQ6
 
 !rf16.d = !VSYNC;
 
-!C16M.d = C16G;
+!C16M_RES.d = C16G;
 
 AS.oe = 'b'1;
 AS = LAS & !FC0

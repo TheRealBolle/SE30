@@ -23,7 +23,7 @@ Device   G16V8MA;
                     VIDS0 --->|7           14|---- NC (f14)
                     VID_V --->|8           13|---> !VIDMUX
                      !R_W --->|9           12|---> !VIDW
-                      GND ----|10          11|<--- A16
+                      GND ----|10          11|<--- A16_ROM_39
                               |______________|
 
   Arrows show signal direction:  ---> into the chip is an input, out of it
@@ -54,7 +54,7 @@ PIN 6  = VIDS1;         /* i6 */
 PIN 7  = VIDS0;         /* i7 */
 PIN 8  = VID_V;         /* i8 */
 PIN 9  = !R_W;          /* i9 */
-PIN 11 = A16;           /* i11 */
+PIN 11 = A16_ROM_39;    /* i11 */
 
 /* Outputs */
 PIN 12 = !VIDW;         /* o12 */
@@ -79,7 +79,7 @@ MIN VIDROM = 0;
 
 /* Logic */
 VIDW.oe = 'b'1;
-VIDW = VID_V & R_W & !A16 & VIDMUX;
+VIDW = VID_V & R_W & !A16_ROM_39 & VIDMUX;
 
 VIDMUX.oe = 'b'1;
 !VIDMUX = !VIDS3 & VIDS0 & VIDMUX
@@ -94,7 +94,7 @@ f14.oe = 'b'1;
 f14 = VIDS4 & VIDS3 & VIDS2 & VIDS1 & !VIDS0;
 
 DOE.oe = 'b'1;
-DOE = !VIDS4 & !VIDS3 & !VIDS2 & !VIDS1 & !VIDS0 & VID_V & !R_W & !A16
+DOE = !VIDS4 & !VIDS3 & !VIDS2 & !VIDS1 & !VIDS0 & VID_V & !R_W & !A16_ROM_39
     # VIDS4 & VIDS3 & !VIDS2 & !VIDS1 & !VIDS0 & !VID_V
     # !VIDS0 & DOE;
 
@@ -118,4 +118,4 @@ VC.oe = 'b'1;
     # VIDS0 & !VC;
 
 VIDROM.oe = 'b'1;
-VIDROM = A16 & !f16;
+VIDROM = A16_ROM_39 & !f16;

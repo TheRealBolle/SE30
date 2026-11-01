@@ -23,7 +23,7 @@ Device   G16V8MS;
                     VADR5 --->|7           14|---> !VSYNC
                     VADR7 --->|8           13|---> VIDOUT
                    SERVID --->|9           12|---> VIDTIME
-                      GND ----|10          11|<--- !OE
+                      GND ----|10          11|<--- PD7
                               |______________|
 
   Arrows show signal direction:  ---> into the chip is an input, out of it
@@ -32,7 +32,7 @@ Device   G16V8MS;
   Pins 16-19 are NC on the schematic, but the chip still drives them.
   They are internal state fed back into the logic. Leave them unconnected.
 
-  Pin 1 is the register clock. Pin 11 is !OE, on pulldown net PD7.
+  Pin 1 is the register clock. Pin 11 is output enable, held low by PD7.
 
 */
 

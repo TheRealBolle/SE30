@@ -23,7 +23,7 @@ Device   G16V8MS;
                      CNT5 --->|7           14|---> SREGLD
                      CNT6 --->|8           13|---> !HSYNC
                   VIDTIME --->|9           12|---> TWOLINE
-                      GND ----|10          11|<--- !OE
+                      GND ----|10          11|<--- PD1
                               |______________|
 
   Arrows show signal direction:  ---> into the chip is an input, out of it
@@ -32,7 +32,7 @@ Device   G16V8MS;
   Pins 17 and 18 are NC on the schematic, but the chip still drives them.
   They are internal state fed back into the logic. Leave them unconnected.
 
-  Pin 1 is the register clock. Pin 11 is !OE, on pulldown net PD1.
+  Pin 1 is the register clock. Pin 11 is output enable, held low by PD1.
 
 */
 

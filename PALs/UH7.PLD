@@ -22,7 +22,7 @@ Device   G16V8MA;
                       GND ----|6           15|---> RAMRWA
                     CASLL --->|7           14|---- NC
                    OSC32M --->|8           13|---> RAMRWB
-                       NC ----|9           12|---> C32M
+                       NC ----|9           12|---> C32M_RES
                       GND ----|10          11|---- GND
                               |______________|
 
@@ -41,7 +41,8 @@ Device   G16V8MA;
 /* The name after each PIN is the JEDEC NOTE PINS label.              */
 /* Pins 1, 6 and 11 are tied to GND; pins 9, 14, 19 are unconnected.  */
 /* OSC32M is not a schematic label: pin 8 is the Y2 oscillator pin.   */
-/* C32M leaves pin 12 through R28; RCMUX* leaves pin 18 through L15.  */
+/* C32M_RES is pin 12's net, which reaches C32M through R28.          */
+/* RCMUX* leaves pin 18 through L15.                                  */
 /**********************************************************************/
 
 /* Inputs */
@@ -54,7 +55,7 @@ PIN 8  = OSC32M;        /* i8 */
 PIN 17 = !R_W;          /* f17 */
 
 /* Outputs */
-PIN 12 = C32M;          /* o12 */
+PIN 12 = C32M_RES;      /* o12 */
 PIN 13 = RAMRWB;        /* f13 */
 PIN 15 = RAMRWA;        /* f15 */
 PIN 16 = WR;            /* o16 */
@@ -71,15 +72,15 @@ PIN 18 = !RCMUX_OUT;    /* o18 */
 
 /* Keep every product term: some outputs are asynchronous latches and
    rely on these terms, so the compiler must not reduce them. */
-MIN C32M = 0;
+MIN C32M_RES = 0;
 MIN RAMRWB = 0;
 MIN RAMRWA = 0;
 MIN WR = 0;
 MIN RCMUX_OUT = 0;
 
 /* Logic */
-C32M.oe = 'b'1;
-!C32M = OSC32M;
+C32M_RES.oe = 'b'1;
+!C32M_RES = OSC32M;
 
 RAMRWB.oe = 'b'1;
 !RAMRWB = RASB & !CASLL & R_W

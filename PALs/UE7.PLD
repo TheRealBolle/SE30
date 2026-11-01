@@ -23,13 +23,13 @@ Device   G16V8MS;
                        NC ----|7           14|---> VIDS1
                        NC ----|8           13|---> VIDS0
                   VIDTIME --->|9           12|---> VID_V
-                      GND ----|10          11|<--- !OE
+                      GND ----|10          11|<--- PD8
                               |______________|
 
   Arrows show signal direction:  ---> into the chip is an input, out of it
   an output, ---- power, a tie-off or no connection.
 
-  Pin 1 is the register clock. Pin 11 is !OE, on pulldown net PD8.
+  Pin 1 is the register clock. Pin 11 is output enable, held low by PD8.
 
 */
 
